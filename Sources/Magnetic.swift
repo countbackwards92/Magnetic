@@ -84,8 +84,8 @@ import SpriteKit
     }
     
     func configure() {
-        let strength = Float(max(size.width, size.height))
-        let radius = strength.squareRoot() * 100
+        let strength = Float(max(size.width, size.height)) * 4
+        let radius = strength.squareRoot() * 50
         
         physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         physicsBody = SKPhysicsBody(edgeLoopFrom: { () -> CGRect in
@@ -106,8 +106,8 @@ import SpriteKit
         if children.count % 2 == 0 {
             x = frame.width + node.frame.width // right
         }
-        let y = CGFloat.random(node.frame.height, frame.height - node.frame.height)
-        node.position = CGPoint(x: x, y: y)
+        let y = size.height / 2 + CGFloat.random(-node.frame.height, node.frame.height)
+        node.position = CGPoint(x: x, y: node.frame.height)
         super.addChild(node)
     }
     
