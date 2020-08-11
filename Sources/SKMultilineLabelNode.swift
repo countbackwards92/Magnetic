@@ -8,6 +8,10 @@
 
 import SpriteKit
 
+public protocol SKMultilineLabelNodeDelegate: class {
+    func needUpdateRadiusToFit(_ labelWidth: CGFloat)
+}
+
 @objcMembers open class SKMultilineLabelNode: SKNode {
     
     open var text: String? { didSet { update() } }
@@ -24,6 +28,8 @@ import SpriteKit
     open var lineHeight: CGFloat? { didSet { update() } }
     
     open var width: CGFloat! { didSet { update() } }
+    
+    open weak var delegate: SKMultilineLabelNodeDelegate?
     
     func update() {
         self.removeAllChildren()
@@ -43,6 +49,7 @@ import SpriteKit
             }
         }
         
+        var maxWidth: CGFloat = 0
         let lines = stack.values.map { $0.joined(separator: separator ?? "") }
         for (index, line) in lines.enumerated() {
             let label = SKLabelNode(fontNamed: fontName)
@@ -53,7 +60,13 @@ import SpriteKit
             label.horizontalAlignmentMode = horizontalAlignmentMode
             let y = (CGFloat(index) - (CGFloat(lines.count) / 2) + 0.5) * -(lineHeight ?? fontSize)
             label.position = CGPoint(x: 0, y: y)
+            if label.frame.size.width > maxWidth {
+                maxWidth = label.frame.size.width
+            }
             self.addChild(label)
+        }
+        if maxWidth > 0 {
+            delegate?.needUpdateRadiusToFit(maxWidth)
         }
     }
     

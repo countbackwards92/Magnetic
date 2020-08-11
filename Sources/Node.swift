@@ -12,6 +12,7 @@ import SpriteKit
     
     public lazy var label: SKMultilineLabelNode = { [unowned self] in
         let label = SKMultilineLabelNode()
+        label.delegate = self
         label.fontName = Defaults.fontName
         label.fontSize = Defaults.fontSize
         label.fontColor = Defaults.fontColor
@@ -258,8 +259,8 @@ import SpriteKit
     public func update(radius: CGFloat, withLabelWidth width: CGFloat? = nil) {
         guard let path = SKShapeNode(circleOfRadius: radius).path else { return }
         self.path = path
-        self.label.width = width ?? radius
         self.radius = radius
+        self.label.width = width ?? radius
         regeneratePhysicsBody(withPath: path)
     }
     
@@ -338,4 +339,17 @@ import SpriteKit
         run(.group([.fadeOut(withDuration: animationDuration), .scale(to: 0, duration: animationDuration)]), completion: completion)
     }
     
+}
+
+// MARK: - SKMultilineLabelNodeDelegate
+extension Node: SKMultilineLabelNodeDelegate {
+    public func needUpdateRadiusToFit(_ labelWidth: CGFloat) {
+        let newRadius = labelWidth / 2 + padding
+        if self.radius != newRadius {
+            guard let path = SKShapeNode(circleOfRadius: newRadius).path else { return }
+            self.path = path
+            self.radius = newRadius
+            regeneratePhysicsBody(withPath: path)
+        }
+    }
 }
