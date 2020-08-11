@@ -33,7 +33,7 @@ extension UIColor {
 extension SKAction {
   typealias ColorTransitionConfigure = ((_ node: SKNode) -> Void)?
   
-  static func colorTransition(from fromColor: UIColor, to toColor: UIColor, duration: Double = 0.4, configure: ColorTransitionConfigure = nil) -> SKAction {
+    static func colorTransition(from fromColor: UIColor, to toColor: UIColor, fromBorderColor: UIColor? = nil, toBorderColor: UIColor? = nil, duration: Double = 0.4, configure: ColorTransitionConfigure = nil) -> SKAction {
     return SKAction.customAction(withDuration: duration, actionBlock: { (node : SKNode!, elapsedTime : CGFloat) -> Void in
       let fraction = CGFloat(elapsedTime / CGFloat(duration))
       let startColorComponents = fromColor.components
@@ -50,6 +50,17 @@ extension SKAction {
       } else {
         if let node = node as? SKShapeNode {
           node.fillColor = transColor
+            if
+            let startBorderColorComponents = fromBorderColor?.components,
+            let endBorderColorComponents = toBorderColor?.components {
+                let transColor = UIColor(
+                  red: lerp(a: startBorderColorComponents.red, b: endBorderColorComponents.red, fraction: fraction),
+                  green: lerp(a: startBorderColorComponents.green, b: endBorderColorComponents.green, fraction: fraction),
+                  blue: lerp(a: startBorderColorComponents.blue, b: endBorderColorComponents.blue, fraction: fraction),
+                  alpha: lerp(a: startBorderColorComponents.alpha, b: endBorderColorComponents.alpha, fraction: fraction)
+                )
+                node.strokeColor = transColor
+            }
         }
 
         if let label = node as? SKMultilineLabelNode {

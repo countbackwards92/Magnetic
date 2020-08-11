@@ -98,12 +98,7 @@ import SpriteKit
      The scale of the deselected animation
     */
     open var deselectedScale: CGFloat = 1
-
-    /**
-     The original color of the node before animation
-    */
-    private var originalColor: UIColor = Defaults.color
-  
+    
     /**
      The color of the seleted node
     */
@@ -112,13 +107,12 @@ import SpriteKit
     /**
      The text color of the seleted node
     */
-    open var selectedFontColor: UIColor?
+    open var selectedFontColor: UIColor? {
+        didSet {
+            updateTextColor()
+        }
+    }
   
-    /**
-     The original text color of the node before animation
-     */
-    private var originalFontColor: UIColor = Defaults.fontColor
-    
     /**
      The duration of the selected/deselected animations
      */
@@ -149,9 +143,18 @@ import SpriteKit
     /**
      The color of the label's font
     */
-    open var fontColor: UIColor {
-      get { label.fontColor ?? Defaults.fontColor }
-      set { label.fontColor = newValue }
+    open var fontColor: UIColor = Defaults.fontColor {
+        didSet {
+            updateTextColor()
+        }
+    }
+    
+    private func updateTextColor() {
+        if !isSelected {
+            label.fontColor = fontColor
+        } else {
+            label.fontColor = selectedFontColor
+        }
     }
     
     /**
@@ -278,19 +281,18 @@ import SpriteKit
      The animation to execute when the node is selected.
      */
     open func selectedAnimation() {
-        self.originalFontColor = fontColor
-        self.originalColor = fillColor
-        
         let scaleAction = SKAction.scale(to: selectedScale, duration: animationDuration)
         
         if let selectedFontColor = selectedFontColor {
-            label.run(.colorTransition(from: originalFontColor, to: selectedFontColor))
+            let originalFontColor = fontColor
+            label.run(.colorTransition(from: originalFontColor, to: selectedFontColor, duration: animationDuration))
         }
         
         if let selectedColor = selectedColor {
+            let originalColor = color
           run(.group([
             scaleAction,
-            .colorTransition(from: originalColor, to: selectedColor, duration: animationDuration)
+            .colorTransition(from: originalColor, to: selectedColor, fromBorderColor: .clear, toBorderColor: selectedColor, duration: animationDuration)
           ]))
         } else {
           run(scaleAction)
@@ -308,15 +310,17 @@ import SpriteKit
         let scaleAction = SKAction.scale(to: deselectedScale, duration: animationDuration)
         
         if let selectedColor = selectedColor {
+            let originalColor = color
           run(.group([
             scaleAction,
-            .colorTransition(from: selectedColor, to: originalColor, duration: animationDuration)
+            .colorTransition(from: selectedColor, to: originalColor, fromBorderColor: selectedColor, toBorderColor: .clear, duration: animationDuration)
           ]))
         } else {
           run(scaleAction)
         }
         
         if let selectedFontColor = selectedFontColor {
+            let originalFontColor = fontColor
           label.run(.colorTransition(from: selectedFontColor, to: originalFontColor, duration: animationDuration))
         }
 
