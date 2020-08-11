@@ -29,7 +29,7 @@ import SpriteKit
      Controls whether you can select multiple nodes.
      */
     open var allowsMultipleSelection: Bool = true
-    
+    open var selectionLimit: Int = Int.max
     
     /**
     Controls whether an item can be removed by holding down
@@ -155,7 +155,7 @@ extension Magnetic {
             node.isSelected = false
             magneticDelegate?.magnetic(self, didDeselect: node)
         } else {
-            if !allowsMultipleSelection, let selectedNode = selectedChildren.first {
+            if !allowsMultipleSelection || allowsMultipleSelection && (selectedChildren.count == selectionLimit), let selectedNode = selectedChildren.first {
                 selectedNode.isSelected = false
                 magneticDelegate?.magnetic(self, didDeselect: selectedNode)
             }
