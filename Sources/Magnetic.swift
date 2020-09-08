@@ -9,9 +9,9 @@
 import SpriteKit
 
 @objc public protocol MagneticDelegate: class {
-    func magnetic(_ magnetic: Magnetic, didSelect node: Node)
-    func magnetic(_ magnetic: Magnetic, didDeselect node: Node)
-    @objc optional func magnetic(_ magnetic: Magnetic, didRemove node: Node)
+    func magnetic(_ magnetic: Magnetic, didSelect node: MagneticNode)
+    func magnetic(_ magnetic: Magnetic, didDeselect node: MagneticNode)
+    @objc optional func magnetic(_ magnetic: Magnetic, didRemove node: MagneticNode)
 }
 
 @objcMembers open class Magnetic: SKScene {
@@ -46,8 +46,8 @@ import SpriteKit
     /**
      The selected children.
      */
-    open var selectedChildren: [Node] {
-        return children.compactMap { $0 as? Node }.filter { $0.isSelected }
+    open var selectedChildren: [MagneticNode] {
+        return children.compactMap { $0 as? MagneticNode }.filter { $0.isSelected }
     }
     
     /**
@@ -184,11 +184,11 @@ extension Magnetic {
         }
     }
     
-    open func node(at point: CGPoint) -> Node? {
-        return nodes(at: point).compactMap { $0 as? Node }.filter { $0.path!.contains(convert(point, to: $0)) }.first
+    open func node(at point: CGPoint) -> MagneticNode? {
+        return nodes(at: point).compactMap { $0 as? MagneticNode }.filter { $0.path!.contains(convert(point, to: $0)) }.first
     }
     
-    /// Resets the `MagneticView` by making all visible `Node` objects vanish to a point.
+    /// Resets the `MagneticView` by making all visible `MagneticNode` objects vanish to a point.
     open func reset() {
         let speed = physicsWorld.speed
         physicsWorld.speed = 0
@@ -202,14 +202,14 @@ extension Magnetic {
 
 /// An extension to handle the reset animation.
 extension Magnetic {
-    /// Retrieves an array of `Node` objects softed by distance.
+    /// Retrieves an array of `MagneticNode` objects softed by distance.
     ///
-    /// - Returns: `[Node]`
+    /// - Returns: `[MagneticNode]`
     ///
-    func sortedNodes() -> [Node] {
-        return children.compactMap { $0 as? Node }.sorted { node, nextNode in
+    func sortedNodes() -> [MagneticNode] {
+        return children.compactMap { $0 as? MagneticNode }.sorted { node, nextMagneticNode in
             let distance = node.position.distance(from: magneticField.position)
-            let nextDistance = nextNode.position.distance(from: magneticField.position)
+            let nextDistance = nextMagneticNode.position.distance(from: magneticField.position)
             return distance < nextDistance && node.isSelected
         }
     }

@@ -8,7 +8,7 @@
 
 import SpriteKit
 
-@objcMembers open class Node: SKShapeNode {
+@objcMembers open class MagneticNode: SKShapeNode {
     
     public lazy var label: SKMultilineLabelNode = { [unowned self] in
         let label = SKMultilineLabelNode()
@@ -342,7 +342,7 @@ import SpriteKit
 }
 
 // MARK: - SKMultilineLabelNodeDelegate
-extension Node: SKMultilineLabelNodeDelegate {
+extension MagneticNode: SKMultilineLabelNodeDelegate {
     public func needUpdateRadiusToFit(_ labelWidth: CGFloat) {
         let newRadius = labelWidth / 2 + padding
         if self.radius != newRadius {
