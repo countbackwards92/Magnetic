@@ -170,6 +170,8 @@ import SpriteKit
     
     open private(set) var radius: CGFloat?
     
+    open var index: Int?
+    
     /**
      Set of default values
      */
