@@ -124,7 +124,10 @@ extension Magnetic {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         let previous = touch.previousLocation(in: self)
-        guard location.distance(from: previous) != 0 else { return }
+        
+        let dragLimit: CGFloat = touch.type == .pencil ? 10 : 2
+        
+        guard location.distance(from: previous) > dragLimit else { return }
         
         isDragging = true
         
